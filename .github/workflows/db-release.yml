@@ -1,44 +1,40 @@
-name: Build & Publish CellMaster DB
+name: Publish manifest from release asset
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version (e.g., 2025.10)"
+        description: "Version tag (e.g., 2025.10)"
         required: true
         type: string
-      db_path:
-        description: "Path to towers.db (default: ./towers.db)"
-        required: false
-        type: string
-        default: "./towers.db"
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  publish:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ensure updates folder
-        run: mkdir -p updates
-
-      - name: Zip DB
+      - name: Download release asset
+        env:
+          VERSION: ${{ inputs.version }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
         run: |
           set -e
-          if [ ! -f "${{ inputs.db_path }}" ]; then
-            echo "DB not found at ${{ inputs.db_path }}"; exit 1
-          fi
-          cp "${{ inputs.db_path }}" ./towers.db
-          zip -9 "towers-${{ inputs.version }}.zip" towers.db
+          ASSET="towers-${VERSION}.zip"
+          URL="https://github.com/${OWNER}/${REPO}/releases/download/${VERSION}/${ASSET}"
+          echo "URL=$URL" >> $GITHUB_ENV
+          curl -L -f -o "$ASSET" "$URL"
 
       - name: SHA256 + size + timestamp
         id: meta
         run: |
-          echo "sha=$(shasum -a 256 towers-${{ inputs.version }}.zip | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "size=$(stat -f%z towers-${{ inputs.version }}.zip)" >> $GITHUB_OUTPUT
+          FILE="towers-${{ inputs.version }}.zip"
+          echo "sha=$(shasum -a 256 "$FILE" | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "size=$(stat -f%z "$FILE")" >> $GITHUB_OUTPUT
           echo "released=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
 
       - name: Build manifest.json
@@ -50,7 +46,7 @@ jobs:
             "minAppVersion": "1.0.0",
             "sizeBytes": ${{ steps.meta.outputs.size }},
             "sha256": "${{ steps.meta.outputs.sha }}",
-            "url": "https://github.com/${{ github.repository }}/releases/download/${{ inputs.version }}/towers-${{ inputs.version }}.zip",
+            "url": "${{ env.URL }}",
             "notes": "Monthly update",
             "signature": ""
           }
@@ -70,17 +66,9 @@ json.dump(m, open('manifest.json','w'))
 PY
           rm -f secretkey.txt
 
-      - name: Create GitHub Release with zip
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.version }}
-          name: DB ${{ inputs.version }}
-          draft: false
-          prerelease: false
-          files: towers-${{ inputs.version }}.zip
-
       - name: Commit manifest to main (served by Pages)
         run: |
+          mkdir -p updates
           mv manifest.json updates/manifest.json
           git add updates/manifest.json
           git -c user.name="Gold Standard Solutions" -c user.email="goldstandardsoftware@gmail.com" commit -m "manifest ${{ inputs.version }}" || true
