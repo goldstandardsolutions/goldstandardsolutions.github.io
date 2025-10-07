@@ -1,0 +1,87 @@
+name: Build & Publish CellMaster DB
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (e.g., 2025.10)"
+        required: true
+        type: string
+      db_path:
+        description: "Path to towers.db (default: ./towers.db)"
+        required: false
+        type: string
+        default: "./towers.db"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure updates folder
+        run: mkdir -p updates
+
+      - name: Zip DB
+        run: |
+          set -e
+          if [ ! -f "${{ inputs.db_path }}" ]; then
+            echo "DB not found at ${{ inputs.db_path }}"; exit 1
+          fi
+          cp "${{ inputs.db_path }}" ./towers.db
+          zip -9 "towers-${{ inputs.version }}.zip" towers.db
+
+      - name: SHA256 + size + timestamp
+        id: meta
+        run: |
+          echo "sha=$(shasum -a 256 towers-${{ inputs.version }}.zip | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "size=$(stat -f%z towers-${{ inputs.version }}.zip)" >> $GITHUB_OUTPUT
+          echo "released=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Build manifest.json
+        run: |
+          cat > manifest.json <<EOF
+          {
+            "version": "${{ inputs.version }}",
+            "releasedAt": "${{ steps.meta.outputs.released }}",
+            "minAppVersion": "1.0.0",
+            "sizeBytes": ${{ steps.meta.outputs.size }},
+            "sha256": "${{ steps.meta.outputs.sha }}",
+            "url": "https://github.com/${{ github.repository }}/releases/download/${{ inputs.version }}/towers-${{ inputs.version }}.zip",
+            "notes": "Monthly update",
+            "signature": ""
+          }
+          EOF
+
+      - name: Sign manifest (minisign)
+        run: |
+          brew install minisign
+          printf "%s" "${{ secrets.MINISIGN_SECRETKEY }}" > secretkey.txt
+          minisign -S -s secretkey.txt -m manifest.json -x manifest.json.minisig
+          SIG=$(grep -A1 'signature' manifest.json.minisig | tail -n1 | tr -d '\n')
+          python3 - <<PY
+import json
+m=json.load(open('manifest.json'))
+m['signature']="${SIG}"
+json.dump(m, open('manifest.json','w'))
+PY
+          rm -f secretkey.txt
+
+      - name: Create GitHub Release with zip
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          name: DB ${{ inputs.version }}
+          draft: false
+          prerelease: false
+          files: towers-${{ inputs.version }}.zip
+
+      - name: Commit manifest to main (served by Pages)
+        run: |
+          mv manifest.json updates/manifest.json
+          git add updates/manifest.json
+          git -c user.name="Gold Standard Solutions" -c user.email="goldstandardsoftware@gmail.com" commit -m "manifest ${{ inputs.version }}" || true
+          git push
