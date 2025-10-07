@@ -1,0 +1,75 @@
+name: Publish manifest from release asset
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g., 2025.10)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download release asset (.db)
+        env:
+          VERSION: ${{ inputs.version }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          set -e
+          ASSET="towers-${VERSION}.db"
+          URL="https://github.com/${OWNER}/${REPO}/releases/download/${VERSION}/${ASSET}"
+          echo "URL=$URL" >> $GITHUB_ENV
+          curl -L -f -o "$ASSET" "$URL"
+
+      - name: SHA256 + size + timestamp
+        id: meta
+        run: |
+          FILE="towers-${{ inputs.version }}.db"
+          echo "sha=$(shasum -a 256 "$FILE" | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "size=$(stat -f%z "$FILE")" >> $GITHUB_OUTPUT
+          echo "released=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Build manifest.json
+        run: |
+          cat > manifest.json <<EOF
+          {
+            "version": "${{ inputs.version }}",
+            "releasedAt": "${{ steps.meta.outputs.released }}",
+            "minAppVersion": "1.0.0",
+            "sizeBytes": ${{ steps.meta.outputs.size }},
+            "sha256": "${{ steps.meta.outputs.sha }}",
+            "url": "${{ env.URL }}",
+            "notes": "Monthly update",
+            "signature": ""
+          }
+          EOF
+
+      - name: Sign manifest (minisign)
+        run: |
+          brew install minisign
+          printf "%s" "${{ secrets.MINISIGN_SECRETKEY }}" > secretkey.txt
+          minisign -S -s secretkey.txt -m manifest.json -x manifest.json.minisig
+          SIG=$(grep -A1 'signature' manifest.json.minisig | tail -n1 | tr -d '\n')
+          python3 - <<'PY'
+import json
+m=json.load(open('manifest.json'))
+m['signature']="${SIG}"
+json.dump(m, open('manifest.json','w'))
+PY
+          rm -f secretkey.txt
+
+      - name: Commit manifest to main (served by Pages)
+        run: |
+          mkdir -p updates
+          mv manifest.json updates/manifest.json
+          git add updates/manifest.json
+          git -c user.name="Gold Standard Solutions" -c user.email="goldstandardsoftware@gmail.com" commit -m "manifest ${{ inputs.version }}" || true
+          git push
