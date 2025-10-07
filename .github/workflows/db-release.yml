@@ -17,14 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download release asset (.sqlite)
+      - name: Download release asset (.db)
         env:
           VERSION: ${{ inputs.version }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
         run: |
           set -e
-          ASSET="towers-${VERSION}.sqlite"
+          ASSET="towers-${VERSION}.db"
           URL="https://github.com/${OWNER}/${REPO}/releases/download/${VERSION}/${ASSET}"
           echo "URL=$URL" >> $GITHUB_ENV
           curl -L -f -o "$ASSET" "$URL"
@@ -32,7 +32,7 @@ jobs:
       - name: SHA256 + size + timestamp
         id: meta
         run: |
-          FILE="towers-${{ inputs.version }}.sqlite"
+          FILE="towers-${{ inputs.version }}.db"
           echo "sha=$(shasum -a 256 "$FILE" | awk '{print $1}')" >> $GITHUB_OUTPUT
           echo "size=$(stat -f%z "$FILE")" >> $GITHUB_OUTPUT
           echo "released=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
