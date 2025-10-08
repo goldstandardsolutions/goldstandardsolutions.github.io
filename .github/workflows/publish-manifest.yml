@@ -16,6 +16,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Download release asset (.db)
         env:
@@ -66,10 +68,23 @@ json.dump(m, open('manifest.json','w'))
 PY
           rm -f secretkey.txt
 
-      - name: Commit manifest to main (served by Pages)
+      - name: Commit & push manifest (guaranteed)
+        env:
+          GIT_AUTHOR_NAME: "Gold Standard Solutions"
+          GIT_AUTHOR_EMAIL: "goldstandardsoftware@gmail.com"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
           mkdir -p updates
           mv manifest.json updates/manifest.json
+          git config user.name "${GIT_AUTHOR_NAME}"
+          git config user.email "${GIT_AUTHOR_EMAIL}"
           git add updates/manifest.json
-          git -c user.name="Gold Standard Solutions" -c user.email="goldstandardsoftware@gmail.com" commit -m "manifest ${{ inputs.version }}" || true
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+            git commit -m "manifest ${{ inputs.version }}"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "Manifest committed and pushed."
+          fi
