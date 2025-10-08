@@ -1,5 +1,10 @@
 {
   "version": "2025.10",
-  "releasedAt": "2025-10-07T23:57:57Z",
-  "notes": "manual-dispatch test"
+  "releasedAt": "2025-10-08T00:47:08Z",
+  "minAppVersion": "1.0.0",
+  "sizeBytes": 466161664,
+  "sha256": "6d1432d85d4afac9bd89e59962809ac25b385c2d5aa7ff12c031cc45cc86d46f",
+  "url": "https://github.com/goldstandardsolutions/goldstandardsolutions.github.io/releases/download/2025.10/towers-2025.10.db",
+  "notes": "Monthly update",
+  "signature": "RUTUoFwxjcA4Q4hkJUg+GU/gfu6b7sMW3WjI9EXDw5o8p3A5+P6rHsZyS3GAYiVdjj3/FH9c4F4rWs+7EqWkrNhXj9uewWwAYAk="
 }
