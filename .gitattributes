@@ -1,0 +1,6 @@
+# Ensure manifest JSON uses LF and is checked out as text with LF endings
+updates/manifest.json text eol=lf
+
+# Treat signatures as binary (no CRLF conversions)
+updates/*.sig -text
+updates/*.sig.b64 -text
