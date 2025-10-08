@@ -1,9 +1,7 @@
 name: Sign manifest on release
-permissions:
-  contents: write
+permissions: { contents: write }
 on:
-  release:
-    types: [created, published]
+  release: { types: [created, published] }
   workflow_dispatch:
     inputs:
       version:
@@ -18,28 +16,43 @@ jobs:
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y openssl jq curl
 
-      - name: Build private key
-        env:
-          EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }}
+      - name: Configure git identity
         run: |
-          [ -z "$EC_PRIVATE_PEM" ] && { echo "missing EC_PRIVATE_PEM"; exit 1; }
-          printf "%s" "$EC_PRIVATE_PEM" > ec_private.pem
-          chmod 600 ec_private.pem
+          git config user.name "Gold Standard Solutions"
+          git config user.email "goldstandardsoftware@gmail.com"
 
-      - name: Determine tag
+      - name: Build private key from secret (base64-safe)
+        env:
+          EC_PRIVATE_PEM_B64: ${{ secrets.EC_PRIVATE_PEM_B64 }}
+          EC_PRIVATE_PEM:     ${{ secrets.EC_PRIVATE_PEM }}
+        run: |
+          set -e
+          if [ -n "$EC_PRIVATE_PEM_B64" ]; then
+            echo "$EC_PRIVATE_PEM_B64" | base64 -d > ec_private.pem
+          elif [ -n "$EC_PRIVATE_PEM" ]; then
+            printf "%s" "$EC_PRIVATE_PEM" | sed 's/\\r//g; s/\\n/\n/g' > ec_private.pem
+          else
+            echo "No key in secrets (EC_PRIVATE_PEM_B64 or EC_PRIVATE_PEM)"; exit 1
+          fi
+          chmod 600 ec_private.pem
+          openssl pkey -in ec_private.pem -noout >/dev/null
+
+      - name: Determine tag/asset/url
         id: vars
         run: |
           TAG="${{ github.event.inputs.version || github.ref_name }}"
           ASSET="towers-${TAG}.db"
           URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ASSET}"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "tag=$TAG"     >> $GITHUB_OUTPUT
           echo "asset=$ASSET" >> $GITHUB_OUTPUT
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "url=$URL"     >> $GITHUB_OUTPUT
 
-      - name: Download asset
-        run: curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
+      - name: Download DB asset
+        run: |
+          curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
+          ls -lh "${{ steps.vars.outputs.asset }}"
 
-      - name: Make manifest (first push)
+      - name: Write manifest (first push)
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
           URL="${{ steps.vars.outputs.url }}"
@@ -52,7 +65,7 @@ jobs:
           git commit -m "manifest for $TAG" || true
           git push
 
-      - name: Sign served manifest (second push)
+      - name: Fetch served manifest & sign it (second push)
         run: |
           for i in {1..12}; do
             curl -s -H 'Cache-Control:no-cache' https://goldstandardsolutions.github.io/updates/manifest.json -o /tmp/manifest.json
@@ -62,5 +75,5 @@ jobs:
           openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig /tmp/manifest.json
           openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
           git add updates/manifest.sig updates/manifest.sig.b64
-          git commit -m "sign manifest $TAG" || true
+          git commit -m "sign manifest ${{ steps.vars.outputs.tag }}" || true
           git push
