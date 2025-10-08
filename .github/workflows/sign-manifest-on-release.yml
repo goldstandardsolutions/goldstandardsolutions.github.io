@@ -39,7 +39,6 @@ jobs:
       - name: Determine release variables
         id: vars
         run: |
-          # Try to read values from the event payload first (works for release events and manual dispatch)
           TAG=""
           RELEASED=""
           RELEASE_BODY=""
@@ -48,11 +47,9 @@ jobs:
             RELEASED=$(jq -r '.release.published_at // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
             RELEASE_BODY=$(jq -r '.release.body // .inputs.release_body // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
           fi
-          # fallback to inputs if jq didn't find them
           if [ -z "$TAG" ] && [ -n "${{ github.event.inputs.version || '' }}" ]; then
             TAG="${{ github.event.inputs.version }}"
           fi
-          # final fallback to ref name
           if [ -z "$TAG" ]; then
             TAG="${GITHUB_REF##*/}"
           fi
@@ -65,7 +62,6 @@ jobs:
           echo "asset=$ASSET" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "released=$RELEASED" >> $GITHUB_OUTPUT
-          # export the release body to a file for later use
           echo "$RELEASE_BODY" > release_body.txt || true
 
       - name: Download the release asset
@@ -83,24 +79,27 @@ jobs:
           ASSET="${{ steps.vars.outputs.asset }}"
           URL="${{ steps.vars.outputs.url }}"
           RELEASED="${{ steps.vars.outputs.released }}"
-          # read release body generated above (may be empty)
           RELEASE_BODY="$(cat release_body.txt 2>/dev/null || true)"
-          # compute size & sha
           SHA=$(shasum -a 256 "$ASSET" | awk '{print $1}')
           SIZE=$(stat -c%s "$ASSET" 2>/dev/null || stat -f%z "$ASSET")
           mkdir -p updates
-          cat > updates/manifest.json <<EOF
-{
-  "version": "${TAG}",
-  "releasedAt": "${RELEASED}",
-  "minAppVersion": "1.0.0",
-  "sizeBytes": ${SIZE},
-  "sha256": "${SHA}",
-  "url": "${URL}",
-  "notes": "${RELEASE_BODY}",
-  "signature": ""
-}
-EOF
+          jq -n \
+            --arg version "$TAG" \
+            --arg released "$RELEASED" \
+            --arg sha "$SHA" \
+            --arg url "$URL" \
+            --arg notes "$RELEASE_BODY" \
+            --argjson size "$SIZE" \
+            '{
+              version: $version,
+              releasedAt: $released,
+              minAppVersion: "1.0.0",
+              sizeBytes: $size,
+              sha256: $sha,
+              url: $url,
+              notes: $notes,
+              signature: ""
+            }' > updates/manifest.json
           echo "Wrote updates/manifest.json (size $(wc -c < updates/manifest.json) bytes)"
 
       - name: Sign manifest (DER ECDSA P-256)
