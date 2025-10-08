@@ -6,3 +6,4 @@ towers-2025.10.db
 .DS_Store
 towers-*.db
 updates/manifest.json.minisig
+ec_private.pem
