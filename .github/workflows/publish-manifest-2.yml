@@ -1,0 +1,90 @@
+name: Publish manifest from release asset (v2)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g., 2025.10)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Download release asset (.db)
+        env:
+          VERSION: ${{ inputs.version }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          set -e
+          ASSET="towers-${VERSION}.db"
+          URL="https://github.com/${OWNER}/${REPO}/releases/download/${VERSION}/${ASSET}"
+          echo "URL=$URL" >> $GITHUB_ENV
+          curl -L -f -o "$ASSET" "$URL"
+
+      - name: SHA256 + size + timestamp
+        id: meta
+        run: |
+          FILE="towers-${{ inputs.version }}.db"
+          echo "sha=$(shasum -a 256 "$FILE" | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "size=$(stat -f%z "$FILE")" >> $GITHUB_OUTPUT
+          echo "released=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+
+      - name: Build manifest.json
+        run: |
+          cat > manifest.json <<EOF
+          {
+            "version": "${{ inputs.version }}",
+            "releasedAt": "${{ steps.meta.outputs.released }}",
+            "minAppVersion": "1.0.0",
+            "sizeBytes": ${{ steps.meta.outputs.size }},
+            "sha256": "${{ steps.meta.outputs.sha }}",
+            "url": "${{ env.URL }}",
+            "notes": "Monthly update",
+            "signature": ""
+          }
+          EOF
+
+      - name: Sign manifest (minisign)
+        run: |
+          brew install minisign
+          printf "%s" "${{ secrets.MINISIGN_SECRETKEY }}" > secretkey.txt
+          minisign -S -s secretkey.txt -m manifest.json -x manifest.json.minisig
+          SIG=$(grep -A1 'signature' manifest.json.minisig | tail -n1 | tr -d '\n')
+          python3 - <<'PY'
+import json
+m=json.load(open('manifest.json'))
+m['signature']="${SIG}"
+json.dump(m, open('manifest.json','w'))
+PY
+          rm -f secretkey.txt
+
+      - name: Commit & push manifest (guaranteed)
+        env:
+          GIT_AUTHOR_NAME: "Gold Standard Solutions"
+          GIT_AUTHOR_EMAIL: "goldstandardsoftware@gmail.com"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          mkdir -p updates
+          mv manifest.json updates/manifest.json
+          git config user.name "${GIT_AUTHOR_NAME}"
+          git config user.email "${GIT_AUTHOR_EMAIL}"
+          git add updates/manifest.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+            git commit -m "manifest ${{ inputs.version }}"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "Manifest committed and pushed."
+          fi
