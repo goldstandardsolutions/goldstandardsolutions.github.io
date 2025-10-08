@@ -1,118 +1,78 @@
 name: Sign manifest on release
-
-permissions:
-  contents: write
-
+permissions: { contents: write }
 on:
-  release:
-    types: [created, published]
+  release: { types: [created, published] }
   workflow_dispatch:
     inputs:
       version:
-        description: "Optional tag/version to sign (if dispatching manually)"
+        description: "Tag/version to sign (e.g. 2025.10.11)"
         required: false
-      release_body:
-        description: "Optional release notes/body (for manual dispatch)"
-        required: false
-
 jobs:
   sign_manifest:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y openssl jq curl
 
       - name: Build private key file from secret
-        env:
-          EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }}
+        env: { EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }} }
         run: |
-          if [ -z "$EC_PRIVATE_PEM" ]; then
-            echo "EC_PRIVATE_PEM secret is not set. Failing."
-            exit 1
-          fi
-          echo "$EC_PRIVATE_PEM" > ec_private.pem
+          [ -n "$EC_PRIVATE_PEM" ] || { echo "EC_PRIVATE_PEM not set"; exit 1; }
+          printf "%s" "$EC_PRIVATE_PEM" > ec_private.pem
           chmod 600 ec_private.pem
 
-      - name: Determine release variables
+      - name: Determine tag + asset URL
         id: vars
         run: |
           TAG=""
-          RELEASED=""
-          RELEASE_BODY=""
-          if [ -n "${GITHUB_EVENT_PATH:-}" ] && [ -f "${GITHUB_EVENT_PATH}" ]; then
-            TAG=$(jq -r '.release.tag_name // .inputs.version // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
-            RELEASED=$(jq -r '.release.published_at // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
-            RELEASE_BODY=$(jq -r '.release.body // .inputs.release_body // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
+          if [ -f "$GITHUB_EVENT_PATH" ]; then
+            TAG=$(jq -r '.release.tag_name // .inputs.version // empty' "$GITHUB_EVENT_PATH" || true)
           fi
-          if [ -z "$TAG" ] && [ -n "${{ github.event.inputs.version || '' }}" ]; then
-            TAG="${{ github.event.inputs.version }}"
-          fi
-          if [ -z "$TAG" ]; then
-            TAG="${GITHUB_REF##*/}"
-          fi
-          if [ -z "$RELEASED" ]; then
-            RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          fi
+          [ -n "$TAG" ] || TAG="${{ github.event.inputs.version || '' }}"
+          [ -n "$TAG" ] || TAG="${GITHUB_REF##*/}"
           ASSET="towers-${TAG}.db"
           URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ASSET}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "asset=$ASSET" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "released=$RELEASED" >> $GITHUB_OUTPUT
-          echo "$RELEASE_BODY" > release_body.txt || true
 
-      - name: Download the release asset
+      - name: Download the DB asset
+        run: |
+          curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
+          ls -lh "${{ steps.vars.outputs.asset }}"
+
+      - name: Compute metadata & commit manifest.json (first push)
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
           ASSET="${{ steps.vars.outputs.asset }}"
           URL="${{ steps.vars.outputs.url }}"
-          echo "Downloading asset from $URL"
-          curl -L -f -o "$ASSET" "$URL"
-          ls -lh "$ASSET"
-
-      - name: Compute metadata and write manifest
-        run: |
-          TAG="${{ steps.vars.outputs.tag }}"
-          ASSET="${{ steps.vars.outputs.asset }}"
-          URL="${{ steps.vars.outputs.url }}"
-          RELEASED="${{ steps.vars.outputs.released }}"
-          RELEASE_BODY="$(cat release_body.txt 2>/dev/null || true)"
+          RELEASED="${{ github.event.release.published_at || '' }}"
+          [ -n "$RELEASED" ] || RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           SHA=$(shasum -a 256 "$ASSET" | awk '{print $1}')
           SIZE=$(stat -c%s "$ASSET" 2>/dev/null || stat -f%z "$ASSET")
           mkdir -p updates
-          jq -n \
-            --arg version "$TAG" \
-            --arg released "$RELEASED" \
-            --arg sha "$SHA" \
-            --arg url "$URL" \
-            --arg notes "$RELEASE_BODY" \
-            --argjson size "$SIZE" \
-            '{
-              version: $version,
-              releasedAt: $released,
-              minAppVersion: "1.0.0",
-              sizeBytes: $size,
-              sha256: $sha,
-              url: $url,
-              notes: $notes,
-              signature: ""
-            }' > updates/manifest.json
-          echo "Wrote updates/manifest.json (size $(wc -c < updates/manifest.json) bytes)"
+          jq -n --arg v "$TAG" --arg r "$RELEASED" --arg s "$SHA" --arg u "$URL" --arg notes "" --argjson sz "$SIZE" '
+            {version:$v,releasedAt:$r,minAppVersion:"1.0.0",sizeBytes:$sz,sha256:$s,url:$u,notes:$notes,signature:""}' \
+            > updates/manifest.json
+          git add updates/manifest.json
+          git commit -m "ci: write manifest for $TAG" || true
+          git push
 
-      - name: Sign manifest (DER ECDSA P-256)
+      - name: Fetch served manifest.json (exact bytes from Pages)
         run: |
-          openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig updates/manifest.json
-          openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
-          echo "Signed manifest; produced updates/manifest.sig and updates/manifest.sig.b64"
+          BASE="https://goldstandardsolutions.github.io/updates/manifest.json"
+          for i in {1..12}; do
+            curl -s -H 'Cache-Control: no-cache' "$BASE" -o /tmp/manifest.json && [ -s /tmp/manifest.json ] && break
+            sleep 5
+          done
+          wc -c /tmp/manifest.json
 
-      - name: Commit and push manifest + signature
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "ci: publish manifest and signature for ${{ steps.vars.outputs.tag }}"
-          file_pattern: |
-            updates/manifest.json
-            updates/manifest.sig
-            updates/manifest.sig.b64
+      - name: Sign served manifest & commit signature (second push)
+        run: |
+          openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig /tmp/manifest.json
+          openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
+          git add updates/manifest.sig updates/manifest.sig.b64
+          git commit -m "ci: sign served manifest bytes" || true
+          git push
