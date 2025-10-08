@@ -1,9 +1,19 @@
 name: Sign manifest on release
 
+permissions:
+  contents: write
+
 on:
   release:
     types: [created, published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Optional tag/version to sign (if dispatching manually)"
+        required: false
+      release_body:
+        description: "Optional release notes/body (for manual dispatch)"
+        required: false
 
 jobs:
   sign_manifest:
@@ -29,16 +39,34 @@ jobs:
       - name: Determine release variables
         id: vars
         run: |
-          TAG="${{ github.event.release.tag_name }}"
-          # If workflow_dispatch or tag not present, fall back to ref name
+          # Try to read values from the event payload first (works for release events and manual dispatch)
+          TAG=""
+          RELEASED=""
+          RELEASE_BODY=""
+          if [ -n "${GITHUB_EVENT_PATH:-}" ] && [ -f "${GITHUB_EVENT_PATH}" ]; then
+            TAG=$(jq -r '.release.tag_name // .inputs.version // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
+            RELEASED=$(jq -r '.release.published_at // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
+            RELEASE_BODY=$(jq -r '.release.body // .inputs.release_body // empty' "$GITHUB_EVENT_PATH" 2>/dev/null || true)
+          fi
+          # fallback to inputs if jq didn't find them
+          if [ -z "$TAG" ] && [ -n "${{ github.event.inputs.version || '' }}" ]; then
+            TAG="${{ github.event.inputs.version }}"
+          fi
+          # final fallback to ref name
           if [ -z "$TAG" ]; then
             TAG="${GITHUB_REF##*/}"
+          fi
+          if [ -z "$RELEASED" ]; then
+            RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           fi
           ASSET="towers-${TAG}.db"
           URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ASSET}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "asset=$ASSET" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "released=$RELEASED" >> $GITHUB_OUTPUT
+          # export the release body to a file for later use
+          echo "$RELEASE_BODY" > release_body.txt || true
 
       - name: Download the release asset
         run: |
@@ -46,7 +74,6 @@ jobs:
           ASSET="${{ steps.vars.outputs.asset }}"
           URL="${{ steps.vars.outputs.url }}"
           echo "Downloading asset from $URL"
-          # attempt download (will fail if asset missing)
           curl -L -f -o "$ASSET" "$URL"
           ls -lh "$ASSET"
 
@@ -55,10 +82,10 @@ jobs:
           TAG="${{ steps.vars.outputs.tag }}"
           ASSET="${{ steps.vars.outputs.asset }}"
           URL="${{ steps.vars.outputs.url }}"
-          RELEASED="${{ github.event.release.published_at }}"
-          if [ -z "$RELEASED" ]; then
-            RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          fi
+          RELEASED="${{ steps.vars.outputs.released }}"
+          # read release body generated above (may be empty)
+          RELEASE_BODY="$(cat release_body.txt 2>/dev/null || true)"
+          # compute size & sha
           SHA=$(shasum -a 256 "$ASSET" | awk '{print $1}')
           SIZE=$(stat -c%s "$ASSET" 2>/dev/null || stat -f%z "$ASSET")
           mkdir -p updates
@@ -70,7 +97,7 @@ jobs:
   "sizeBytes": ${SIZE},
   "sha256": "${SHA}",
   "url": "${URL}",
-  "notes": "${{ github.event.release.body }}",
+  "notes": "${RELEASE_BODY}",
   "signature": ""
 }
 EOF
