@@ -4,7 +4,11 @@ permissions:
 on:
   release:
     types: [created, published]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Tag/version to sign (e.g. 2025.10.11)"
+        required: true
 jobs:
   sign_manifest:
     runs-on: ubuntu-latest
@@ -35,20 +39,28 @@ jobs:
       - name: Download asset
         run: curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
 
-      - name: Make manifest
+      - name: Make manifest (first push)
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
+          URL="${{ steps.vars.outputs.url }}"
+          SIZE=$(stat -c%s "towers-${TAG}.db" 2>/dev/null || stat -f%z "towers-${TAG}.db")
           SHA=$(shasum -a 256 "towers-${TAG}.db" | awk '{print $1}')
-          jq -n --arg v "$TAG" --arg s "$SHA" \
-            '{version:$v,sha256:$s,signature:""}' > updates/manifest.json
+          mkdir -p updates
+          jq -n --arg v "$TAG" --arg u "$URL" --arg s "$SHA" --argjson z "$SIZE" \
+            '{version:$v,releasedAt:(now|todate),minAppVersion:"1.0.0",sizeBytes:$z,sha256:$s,url:$u,notes:"",signature:""}' > updates/manifest.json
           git add updates/manifest.json
           git commit -m "manifest for $TAG" || true
           git push
 
-      - name: Sign served manifest
+      - name: Sign served manifest (second push)
         run: |
-          curl -s -H 'Cache-Control:no-cache' https://goldstandardsolutions.github.io/updates/manifest.json -o /tmp/manifest.json
+          for i in {1..12}; do
+            curl -s -H 'Cache-Control:no-cache' https://goldstandardsolutions.github.io/updates/manifest.json -o /tmp/manifest.json
+            [ -s /tmp/manifest.json ] && break
+            sleep 5
+          done
           openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig /tmp/manifest.json
-          git add updates/manifest.sig
+          openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
+          git add updates/manifest.sig updates/manifest.sig.b64
           git commit -m "sign manifest $TAG" || true
           git push
