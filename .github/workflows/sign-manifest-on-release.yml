@@ -1,0 +1,92 @@
+name: Sign manifest on release
+
+on:
+  release:
+    types: [created, published]
+  workflow_dispatch:
+
+jobs:
+  sign_manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y openssl jq curl
+
+      - name: Build private key file from secret
+        env:
+          EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }}
+        run: |
+          if [ -z "$EC_PRIVATE_PEM" ]; then
+            echo "EC_PRIVATE_PEM secret is not set. Failing."
+            exit 1
+          fi
+          echo "$EC_PRIVATE_PEM" > ec_private.pem
+          chmod 600 ec_private.pem
+
+      - name: Determine release variables
+        id: vars
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          # If workflow_dispatch or tag not present, fall back to ref name
+          if [ -z "$TAG" ]; then
+            TAG="${GITHUB_REF##*/}"
+          fi
+          ASSET="towers-${TAG}.db"
+          URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ASSET}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "asset=$ASSET" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Download the release asset
+        run: |
+          TAG="${{ steps.vars.outputs.tag }}"
+          ASSET="${{ steps.vars.outputs.asset }}"
+          URL="${{ steps.vars.outputs.url }}"
+          echo "Downloading asset from $URL"
+          # attempt download (will fail if asset missing)
+          curl -L -f -o "$ASSET" "$URL"
+          ls -lh "$ASSET"
+
+      - name: Compute metadata and write manifest
+        run: |
+          TAG="${{ steps.vars.outputs.tag }}"
+          ASSET="${{ steps.vars.outputs.asset }}"
+          URL="${{ steps.vars.outputs.url }}"
+          RELEASED="${{ github.event.release.published_at }}"
+          if [ -z "$RELEASED" ]; then
+            RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          fi
+          SHA=$(shasum -a 256 "$ASSET" | awk '{print $1}')
+          SIZE=$(stat -c%s "$ASSET" 2>/dev/null || stat -f%z "$ASSET")
+          mkdir -p updates
+          cat > updates/manifest.json <<EOF
+{
+  "version": "${TAG}",
+  "releasedAt": "${RELEASED}",
+  "minAppVersion": "1.0.0",
+  "sizeBytes": ${SIZE},
+  "sha256": "${SHA}",
+  "url": "${URL}",
+  "notes": "${{ github.event.release.body }}",
+  "signature": ""
+}
+EOF
+          echo "Wrote updates/manifest.json (size $(wc -c < updates/manifest.json) bytes)"
+
+      - name: Sign manifest (DER ECDSA P-256)
+        run: |
+          openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig updates/manifest.json
+          openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
+          echo "Signed manifest; produced updates/manifest.sig and updates/manifest.sig.b64"
+
+      - name: Commit and push manifest + signature
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "ci: publish manifest and signature for ${{ steps.vars.outputs.tag }}"
+          file_pattern: |
+            updates/manifest.json
+            updates/manifest.sig
+            updates/manifest.sig.b64
