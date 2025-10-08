@@ -1,12 +1,10 @@
 name: Sign manifest on release
-permissions: { contents: write }
+permissions:
+  contents: write
 on:
-  release: { types: [created, published] }
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Tag/version to sign (e.g. 2025.10.11)"
-        required: false
+  release:
+    types: [created, published]
+  workflow_dispatch: {}
 jobs:
   sign_manifest:
     runs-on: ubuntu-latest
@@ -16,63 +14,41 @@ jobs:
       - name: Install deps
         run: sudo apt-get update && sudo apt-get install -y openssl jq curl
 
-      - name: Build private key file from secret
-        env: { EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }} }
+      - name: Build private key
+        env:
+          EC_PRIVATE_PEM: ${{ secrets.EC_PRIVATE_PEM }}
         run: |
-          [ -n "$EC_PRIVATE_PEM" ] || { echo "EC_PRIVATE_PEM not set"; exit 1; }
+          [ -z "$EC_PRIVATE_PEM" ] && { echo "missing EC_PRIVATE_PEM"; exit 1; }
           printf "%s" "$EC_PRIVATE_PEM" > ec_private.pem
           chmod 600 ec_private.pem
 
-      - name: Determine tag + asset URL
+      - name: Determine tag
         id: vars
         run: |
-          TAG=""
-          if [ -f "$GITHUB_EVENT_PATH" ]; then
-            TAG=$(jq -r '.release.tag_name // .inputs.version // empty' "$GITHUB_EVENT_PATH" || true)
-          fi
-          [ -n "$TAG" ] || TAG="${{ github.event.inputs.version || '' }}"
-          [ -n "$TAG" ] || TAG="${GITHUB_REF##*/}"
+          TAG="${{ github.event.inputs.version || github.ref_name }}"
           ASSET="towers-${TAG}.db"
           URL="https://github.com/${{ github.repository }}/releases/download/${TAG}/${ASSET}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "asset=$ASSET" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
 
-      - name: Download the DB asset
-        run: |
-          curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
-          ls -lh "${{ steps.vars.outputs.asset }}"
+      - name: Download asset
+        run: curl -Lf -o "${{ steps.vars.outputs.asset }}" "${{ steps.vars.outputs.url }}"
 
-      - name: Compute metadata & commit manifest.json (first push)
+      - name: Make manifest
         run: |
           TAG="${{ steps.vars.outputs.tag }}"
-          ASSET="${{ steps.vars.outputs.asset }}"
-          URL="${{ steps.vars.outputs.url }}"
-          RELEASED="${{ github.event.release.published_at || '' }}"
-          [ -n "$RELEASED" ] || RELEASED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          SHA=$(shasum -a 256 "$ASSET" | awk '{print $1}')
-          SIZE=$(stat -c%s "$ASSET" 2>/dev/null || stat -f%z "$ASSET")
-          mkdir -p updates
-          jq -n --arg v "$TAG" --arg r "$RELEASED" --arg s "$SHA" --arg u "$URL" --arg notes "" --argjson sz "$SIZE" '
-            {version:$v,releasedAt:$r,minAppVersion:"1.0.0",sizeBytes:$sz,sha256:$s,url:$u,notes:$notes,signature:""}' \
-            > updates/manifest.json
+          SHA=$(shasum -a 256 "towers-${TAG}.db" | awk '{print $1}')
+          jq -n --arg v "$TAG" --arg s "$SHA" \
+            '{version:$v,sha256:$s,signature:""}' > updates/manifest.json
           git add updates/manifest.json
-          git commit -m "ci: write manifest for $TAG" || true
+          git commit -m "manifest for $TAG" || true
           git push
 
-      - name: Fetch served manifest.json (exact bytes from Pages)
+      - name: Sign served manifest
         run: |
-          BASE="https://goldstandardsolutions.github.io/updates/manifest.json"
-          for i in {1..12}; do
-            curl -s -H 'Cache-Control: no-cache' "$BASE" -o /tmp/manifest.json && [ -s /tmp/manifest.json ] && break
-            sleep 5
-          done
-          wc -c /tmp/manifest.json
-
-      - name: Sign served manifest & commit signature (second push)
-        run: |
+          curl -s -H 'Cache-Control:no-cache' https://goldstandardsolutions.github.io/updates/manifest.json -o /tmp/manifest.json
           openssl dgst -sha256 -sign ec_private.pem -out updates/manifest.sig /tmp/manifest.json
-          openssl base64 -in updates/manifest.sig -A -out updates/manifest.sig.b64
-          git add updates/manifest.sig updates/manifest.sig.b64
-          git commit -m "ci: sign served manifest bytes" || true
+          git add updates/manifest.sig
+          git commit -m "sign manifest $TAG" || true
           git push
