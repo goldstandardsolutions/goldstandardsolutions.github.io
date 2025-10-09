@@ -1,10 +1,10 @@
 {
-  "version": "2024.10.25",
-  "releasedAt": "2024-10-25T00:00:00Z",
+  "version": "2024.10.26",
+  "releasedAt": "2024-10-26T00:00:00Z",
   "minAppVersion": "1.0.0",
   "sizeBytes": 466161664,
   "sha256": "6d1432d85d4afac9bd89e59962809ac25b385c2d5aa7ff12c031cc45cc86d46f",
-  "url": "https://github.com/goldstandardsolutions/goldstandardsolutions.github.io/releases/download/2024.10.25/towers-2024.10.25.db",
+  "url": "https://github.com/goldstandardsolutions/goldstandardsolutions.github.io/releases/download/2024.10.26/towers-2024.10.26.db",
   "notes": "",
   "signature": ""
 }
