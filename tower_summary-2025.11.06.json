@@ -1,0 +1,1153 @@
+{
+  "extract_date": "2025-11-04",
+  "generated_at": "2025-11-17T00:08:30.928734Z",
+  "total_towers": 51154,
+  "by_carrier": {
+    "BELL": {
+      "carrier_code": 2,
+      "total_towers": 9974,
+      "by_province": {
+        "AB": {
+          "total_towers": 73,
+          "by_region": {
+            "Alberta": 71,
+            "Alberta without Lloydminster, AB": 2
+          }
+        },
+        "BC": {
+          "total_towers": 181,
+          "by_region": {
+            "British Columbia": 105,
+            "Dawson Creek": 2,
+            "Fort Nelson Area": 19,
+            "Okanagan/Columbia": 4,
+            "Southern B.C., Dawson Creek Area": 16,
+            "Vancouver": 26,
+            "Victoria": 9
+          }
+        },
+        "MB": {
+          "total_towers": 133,
+          "by_region": {
+            "Brandon": 32,
+            "Lac du Bonnet": 15,
+            "Manitoba": 68,
+            "Morden/Winkler": 3,
+            "Outside of Winnipeg": 4,
+            "Steinbach": 3,
+            "Thompson": 1,
+            "Winnipeg": 7
+          }
+        },
+        "NB": {
+          "total_towers": 610,
+          "by_region": {
+            "Bas du fleuve/Gaspesie": 2,
+            "Campbellton": 12,
+            "Eastern New Brunswick": 223,
+            "Edmundston": 4,
+            "Fredericton": 53,
+            "Grand Falls": 2,
+            "Miramichi/Bathurst": 10,
+            "Moncton": 3,
+            "New Brunswick": 296,
+            "Saint John": 2,
+            "Southern New Brunswick": 3
+          }
+        },
+        "NL": {
+          "total_towers": 521,
+          "by_region": {
+            "Corner Brook/Stephenville": 3,
+            "Gander/Grand Falls/Windsor": 7,
+            "Labrador": 2,
+            "Newfoundland & Labrador": 509
+          }
+        },
+        "NS": {
+          "total_towers": 683,
+          "by_region": {
+            "Amherst": 10,
+            "Antigonish/New Glasgow": 8,
+            "Bridgewater/Kentville": 12,
+            "Cape Breton": 81,
+            "Halifax": 116,
+            "Mainland Nova Scotia": 408,
+            "Nova Scotia & Prince Edward Island": 48
+          }
+        },
+        "NT": {
+          "total_towers": 73,
+          "by_region": {
+            "Northwest Territories": 24,
+            "Whitehorse, NWT & Nunavut": 31,
+            "Yukon, North West Territories & Nunavut": 18
+          }
+        },
+        "NU": {
+          "total_towers": 35,
+          "by_region": {
+            "Nunavut": 7,
+            "Whitehorse, NWT & Nunavut": 22,
+            "Yukon, North West Territories & Nunavut": 6
+          }
+        },
+        "ON": {
+          "total_towers": 5257,
+          "by_region": {
+            "Alliston": 30,
+            "Arnprior/Renfrew": 3,
+            "Barrie": 264,
+            "Bayfield": 5,
+            "Belleville": 102,
+            "Brantford": 31,
+            "Brockville": 46,
+            "Bruce Peninsula North": 10,
+            "Chatham": 33,
+            "Cobourg": 28,
+            "Cochrane": 3,
+            "Cornwall": 24,
+            "Deception Bay": 5,
+            "Eastern Ontario & Outaouais": 340,
+            "Elliot Lake": 6,
+            "Fergus": 7,
+            "Forest": 4,
+            "Fort Erie": 2,
+            "Fort Frances": 2,
+            "Goderich": 1,
+            "Grand Bend": 8,
+            "Gravenhurst/Bracebridge": 70,
+            "Guelph / Kitchener Urban Core": 41,
+            "Guelph, Kitchener-Waterloo area": 60,
+            "Guelph/Kitchener": 85,
+            "Haldimand/Dunnville": 4,
+            "Hawkesbury": 1,
+            "Huntsville": 84,
+            "Iron Bridge": 12,
+            "Kenora": 5,
+            "Kenora/Sioux Lookout": 5,
+            "Kingston": 44,
+            "Kirkland Lake": 42,
+            "Kirkton, Uniondale": 3,
+            "Listowel/Goderich": 2,
+            "Listowel/Goderich/Stratford": 33,
+            "London/Woodstock/St. Thomas": 189,
+            "Marathon": 1,
+            "Moosonee, Iroquois Falls, Marten River, Temagami": 1,
+            "Niagara-St. Catharines": 160,
+            "North Bay": 84,
+            "North Bay, south of the Montreal River includes the city of Sault Ste. Marie": 4,
+            "North-Eastern Ontario and HWY 144": 28,
+            "Northern Ontario": 283,
+            "Ottawa": 31,
+            "Outside of Ottawa-Gatineau area": 2,
+            "Pembroke": 6,
+            "Peterborough": 6,
+            "Sarnia": 21,
+            "Sault Ste. Marie": 22,
+            "South, North, East Ontario": 1412,
+            "South, North, East Ontario, Algoma, Hornpayne": 1,
+            "Southern Ontario": 1391,
+            "Sudbury": 55,
+            "Thunder Bay": 32,
+            "Toronto": 83
+          }
+        },
+        "PE": {
+          "total_towers": 102,
+          "by_region": {
+            "Charlottetown": 22,
+            "Nova Scotia & Prince Edward Island": 79,
+            "Prince Edward Island": 1
+          }
+        },
+        "QC": {
+          "total_towers": 2245,
+          "by_region": {
+            "Abitibi": 111,
+            "Acton": 1,
+            "Baie-Comeau": 1,
+            "Bas du fleuve/Gaspesie": 110,
+            "Chicoutimi-Jonquiere": 191,
+            "Cowansville": 7,
+            "Des Ruisseaux": 8,
+            "Eastern Ontario & Outaouais": 65,
+            "Eastern Quebec": 162,
+            "Eastern Townships": 389,
+            "Farnham": 5,
+            "Granby": 6,
+            "James Bay and Chibougamau": 2,
+            "Joliette": 21,
+            "La Tuque": 18,
+            "Mont-Laurier/Maniwaki": 8,
+            "Montreal": 386,
+            "Northern Quebec": 69,
+            "Ottawa": 26,
+            "Outside of Montreal area": 390,
+            "Outside of Ottawa-Gatineau area": 1,
+            "Outside of the Montreal area": 3,
+            "Pembroke": 1,
+            "Quebec": 20,
+            "Quebec City Area": 2,
+            "Saguenay River Area": 4,
+            "Sainte-Agathe-des-Monts": 8,
+            "Southern Quebec": 45,
+            "Trois-Rivieres": 146,
+            "Upper Outaouais": 34,
+            "Various communities in Northern Quebec": 2,
+            "Various communities of Northern and Southern Quebec": 3
+          }
+        },
+        "YT": {
+          "total_towers": 61,
+          "by_region": {
+            "Whitehorse, NWT & Nunavut": 10,
+            "Yukon": 6,
+            "Yukon Territory less Whitehorse": 23,
+            "Yukon, North West Territories & Nunavut": 22
+          }
+        }
+      }
+    },
+    "COGECO": {
+      "carrier_code": 11,
+      "total_towers": 42,
+      "by_province": {
+        "ON": {
+          "total_towers": 24,
+          "by_region": {
+            "Belleville": 3,
+            "Brockville": 3,
+            "Chatham": 2,
+            "Cobourg": 1,
+            "Cornwall": 3,
+            "Huntsville": 3,
+            "Listowel/Goderich/Stratford": 1,
+            "Peterborough": 3,
+            "Strathroy": 2,
+            "Windsor/Leamington": 3
+          }
+        },
+        "QC": {
+          "total_towers": 18,
+          "by_region": {
+            "Asbestos": 1,
+            "Baie-Comeau": 1,
+            "Chicoutimi-Jonquiere": 1,
+            "Coaticook": 1,
+            "Cowansville": 1,
+            "Drummondville": 1,
+            "Farnham": 1,
+            "Granby": 1,
+            "Louiseville": 1,
+            "Matane": 2,
+            "Saint-Georges": 1,
+            "Sainte-Marie": 1,
+            "Sherbrooke": 1,
+            "Sorel": 1,
+            "St-Hyacinthe": 1,
+            "Victoriaville": 1,
+            "Windsor": 1
+          }
+        }
+      }
+    },
+    "EASTLINK": {
+      "carrier_code": 8,
+      "total_towers": 1157,
+      "by_province": {
+        "AB": {
+          "total_towers": 18,
+          "by_region": {
+            "Grande Prairie": 18
+          }
+        },
+        "NB": {
+          "total_towers": 208,
+          "by_region": {
+            "Eastern New Brunswick": 15,
+            "Moncton": 3,
+            "New Brunswick": 190
+          }
+        },
+        "NL": {
+          "total_towers": 67,
+          "by_region": {
+            "Newfoundland & Labrador": 66,
+            "St. John's": 1
+          }
+        },
+        "NS": {
+          "total_towers": 742,
+          "by_region": {
+            "Cape Breton": 4,
+            "Eastern New Brunswick": 1,
+            "Halifax": 21,
+            "Mainland Nova Scotia": 56,
+            "New Brunswick": 6,
+            "Nova Scotia & Prince Edward Island": 654
+          }
+        },
+        "ON": {
+          "total_towers": 35,
+          "by_region": {
+            "Kirkland Lake": 8,
+            "Northern Ontario": 26,
+            "Subtract Subdivision of Tier 2-009 – Northern Ontario Thunder Bay & Chapleau": 1
+          }
+        },
+        "PE": {
+          "total_towers": 87,
+          "by_region": {
+            "Nova Scotia & Prince Edward Island": 87
+          }
+        }
+      }
+    },
+    "ECOTEL": {
+      "carrier_code": 12,
+      "total_towers": 55,
+      "by_province": {
+        "NL": {
+          "total_towers": 14,
+          "by_region": {
+            "Labrador City": 4,
+            "Subdivision of 2-001 Newfoundland and Labrador": 10
+          }
+        },
+        "ON": {
+          "total_towers": 3,
+          "by_region": {
+            "Subdivision of 2-009-007 Northern Ontario without Sudbury": 1,
+            "Thunder Bay": 2
+          }
+        },
+        "QC": {
+          "total_towers": 30,
+          "by_region": {
+            "Abitibi": 2,
+            "Amos": 2,
+            "Chibougamau": 4,
+            "Fermont, Rivière Mouchalagane and Lac-Ashuapmushuanet": 12,
+            "Lac-Édouard, Château-Richer and Villeroy.": 2,
+            "Rouyn-Noranda": 2,
+            "Subdivided areas of Tier 2-005 - Southern Quebec": 2,
+            "Subdivision of Tier 2-004 – Eastern Quebec": 2,
+            "Subtract of 2-005 Southern Quebec": 1,
+            "Subtract of 2-007 Northern Quebec": 1
+          }
+        },
+        "SK": {
+          "total_towers": 8,
+          "by_region": {
+            "Lampard, SK": 1,
+            "Rocanville, SK": 2,
+            "Subdivision of Tier 2-011": 4,
+            "Vade, SK": 1
+          }
+        }
+      }
+    },
+    "EXECULINK": {
+      "carrier_code": 13,
+      "total_towers": 3,
+      "by_province": {
+        "ON": {
+          "total_towers": 3,
+          "by_region": {
+            "Woodstock, Port Franks": 3
+          }
+        }
+      }
+    },
+    "FREEDOM": {
+      "carrier_code": 4,
+      "total_towers": 2151,
+      "by_province": {
+        "AB": {
+          "total_towers": 357,
+          "by_region": {
+            "Alberta": 357
+          }
+        },
+        "BC": {
+          "total_towers": 495,
+          "by_region": {
+            "British Columbia": 495
+          }
+        },
+        "ON": {
+          "total_towers": 1299,
+          "by_region": {
+            "Belleville": 13,
+            "Brockville": 11,
+            "Cobourg": 8,
+            "Cornwall": 8,
+            "Eastern Ontario & Outaouais": 75,
+            "Guelph/Kitchener": 81,
+            "London/Woodstock/St. Thomas": 2,
+            "Niagara-St. Catharines": 70,
+            "Southern Ontario": 1025,
+            "Subdivision of 3-025 from 2-008": 1,
+            "Toronto": 5
+          }
+        }
+      }
+    },
+    "ICE": {
+      "carrier_code": 10,
+      "total_towers": 20,
+      "by_province": {
+        "NL": {
+          "total_towers": 2,
+          "by_region": {
+            "Newfoundland & Labrador": 2
+          }
+        },
+        "NT": {
+          "total_towers": 10,
+          "by_region": {
+            "Various communities in YT and NWT": 10
+          }
+        },
+        "NU": {
+          "total_towers": 5,
+          "by_region": {
+            "Various communities in YT and NWT": 5
+          }
+        },
+        "QC": {
+          "total_towers": 1,
+          "by_region": {
+            "Various communities of Northern Quebec (Nunavik)": 1
+          }
+        },
+        "YT": {
+          "total_towers": 2,
+          "by_region": {
+            "Yukon": 2
+          }
+        }
+      }
+    },
+    "ROGERS": {
+      "carrier_code": 1,
+      "total_towers": 11995,
+      "by_province": {
+        "AB": {
+          "total_towers": 1521,
+          "by_region": {
+            "Alberta": 1456,
+            "Calgary": 27,
+            "Canadian Natural Resources Albian Fort Mackay Coverage Area": 8,
+            "Edmonton": 16,
+            "Imperial Oil Kearl coverage area": 8,
+            "Lethbridge": 3,
+            "Medicine Hat/Brooks": 2,
+            "Red Deer": 1
+          }
+        },
+        "BC": {
+          "total_towers": 1849,
+          "by_region": {
+            "British Columbia": 1747,
+            "Courtenay": 5,
+            "Kootenays": 7,
+            "Nanaimo": 5,
+            "Okanagan/Columbia": 8,
+            "Prince George": 6,
+            "Teck Fording River operation mine site area": 4,
+            "Teck Greenhills Operations Mine site area": 4,
+            "Thompson/Cariboo": 4,
+            "Vancouver": 45,
+            "Victoria": 14
+          }
+        },
+        "MB": {
+          "total_towers": 560,
+          "by_region": {
+            "Brandon": 84,
+            "Manitoba": 476
+          }
+        },
+        "NB": {
+          "total_towers": 232,
+          "by_region": {
+            "Bas du fleuve/Gaspesie": 1,
+            "Eastern New Brunswick": 92,
+            "Edmundston": 4,
+            "Fredericton": 13,
+            "Grand Falls": 2,
+            "Moncton": 2,
+            "New Brunswick": 115,
+            "Southern New Brunswick": 1,
+            "Western New Brunswick": 2
+          }
+        },
+        "NL": {
+          "total_towers": 83,
+          "by_region": {
+            "Corner Brook/Stephenville": 1,
+            "Newfoundland & Labrador": 82
+          }
+        },
+        "NS": {
+          "total_towers": 393,
+          "by_region": {
+            "Amherst": 33,
+            "Antigonish/New Glasgow": 45,
+            "Bridgewater/Kentville": 2,
+            "Cape Breton": 20,
+            "Halifax": 25,
+            "Mainland Nova Scotia": 169,
+            "Nova Scotia & Prince Edward Island": 23,
+            "Sydney": 62,
+            "Truro": 14
+          }
+        },
+        "ON": {
+          "total_towers": 5000,
+          "by_region": {
+            "Alliston": 25,
+            "Arnprior/Renfrew": 7,
+            "Barrie": 250,
+            "Belleville": 106,
+            "Brantford": 23,
+            "Brockville": 39,
+            "Bruce Peninsula North": 6,
+            "Chatham": 31,
+            "Cobourg": 28,
+            "Cornwall": 22,
+            "Eastern Ontario & Outaouais": 890,
+            "Elliot Lake": 4,
+            "Fergus": 4,
+            "Fort Erie": 4,
+            "Gravenhurst/Bracebridge": 31,
+            "Guelph/Kitchener": 170,
+            "Haldimand/Dunnville": 8,
+            "Highway 401, Woodstock, London, St. Thomas areas": 14,
+            "Huntsville": 76,
+            "Iron Bridge": 1,
+            "Kapuskasing": 2,
+            "Kirkland Lake": 30,
+            "Listowel/Goderich": 17,
+            "Listowel/Goderich/Stratford": 16,
+            "London/Woodstock/St. Thomas": 170,
+            "Montreal": 1,
+            "Niagara-St. Catharines": 94,
+            "North Bay": 79,
+            "Northern Ontario": 403,
+            "Ottawa": 12,
+            "Sarnia": 11,
+            "Southern Ontario": 2313,
+            "Thunder Bay": 12,
+            "Toronto": 98,
+            "Windsor/Leamington": 3
+          }
+        },
+        "PE": {
+          "total_towers": 33,
+          "by_region": {
+            "Charlottetown": 8,
+            "Nova Scotia & Prince Edward Island": 25
+          }
+        },
+        "QC": {
+          "total_towers": 2211,
+          "by_region": {
+            "Abitibi": 16,
+            "Arnprior/Renfrew": 2,
+            "Bas du fleuve/Gaspesie": 15,
+            "Chicoutimi-Jonquiere": 25,
+            "Coaticook": 2,
+            "Cowansville": 2,
+            "Drummondville": 2,
+            "Eastern Ontario & Outaouais": 86,
+            "Eastern Quebec": 262,
+            "Eastern Townships": 91,
+            "Farnham": 2,
+            "Granby": 3,
+            "Joliette": 8,
+            "Louiseville": 4,
+            "Mont-Laurier/Maniwaki": 6,
+            "Montreal": 1046,
+            "Northern Quebec": 9,
+            "Ottawa": 3,
+            "Quebec": 13,
+            "Sainte-Agathe-des-Monts": 6,
+            "Sherbrooke": 2,
+            "Sorel": 5,
+            "Southern Quebec": 583,
+            "Trois-Rivieres": 14,
+            "Upper Outaouais": 4
+          }
+        },
+        "SK": {
+          "total_towers": 113,
+          "by_region": {
+            "Battleford": 2,
+            "Moose Jaw": 12,
+            "Prince Albert": 2,
+            "Province of Saskatchewan": 94,
+            "Saskatchewan": 3
+          }
+        }
+      }
+    },
+    "SASKTEL": {
+      "carrier_code": 6,
+      "total_towers": 1076,
+      "by_province": {
+        "SK": {
+          "total_towers": 1076,
+          "by_region": {
+            "Battleford": 17,
+            "Estevan": 20,
+            "Moose Jaw": 129,
+            "Northern Saskatchewan": 3,
+            "Outside of Makao AB": 164,
+            "Prince Albert": 32,
+            "Province of Saskatchewan": 453,
+            "Regina": 65,
+            "Saskatchewan": 192,
+            "Saskatoon": 1
+          }
+        }
+      }
+    },
+    "SOGETEL": {
+      "carrier_code": 14,
+      "total_towers": 17,
+      "by_province": {
+        "QC": {
+          "total_towers": 17,
+          "by_region": {
+            "Etchemin, Nicolet, Saint-Ludger": 3,
+            "La Baie": 1,
+            "Nantes": 1,
+            "Saint-Liboire": 1,
+            "Saint-Paulin": 7,
+            "Warwick": 4
+          }
+        }
+      }
+    },
+    "TELUS": {
+      "carrier_code": 3,
+      "total_towers": 15706,
+      "by_province": {
+        "AB": {
+          "total_towers": 2868,
+          "by_region": {
+            "Alberta": 2296,
+            "Alberta without Lloydminster, AB": 13,
+            "Calgary": 161,
+            "Edmonton": 324,
+            "Grande Prairie": 4,
+            "Lethbridge": 35,
+            "Medicine Hat/Brooks": 11,
+            "Red Deer": 24
+          }
+        },
+        "BC": {
+          "total_towers": 8005,
+          "by_region": {
+            "Ashcroft": 7,
+            "British Columbia": 6157,
+            "Courtenay": 26,
+            "Dawson Creek": 11,
+            "Kootenays": 16,
+            "Nanaimo": 24,
+            "Okanagan/Columbia": 116,
+            "Prince George": 30,
+            "Southern B.C., Dawson Creek Area": 1,
+            "Thompson/Cariboo": 28,
+            "Vancouver": 1508,
+            "Victoria": 81
+          }
+        },
+        "MB": {
+          "total_towers": 210,
+          "by_region": {
+            "Brandon": 12,
+            "Manitoba": 185,
+            "Winnipeg": 13
+          }
+        },
+        "NB": {
+          "total_towers": 21,
+          "by_region": {
+            "Campbellton": 1,
+            "Eastern New Brunswick": 5,
+            "Fredericton": 2,
+            "Grand Falls": 1,
+            "Miramichi/Bathurst": 4,
+            "New Brunswick": 8
+          }
+        },
+        "NL": {
+          "total_towers": 12,
+          "by_region": {
+            "Corner Brook/Stephenville": 2,
+            "Gander/Grand Falls/Windsor": 1,
+            "Labrador": 1,
+            "Newfoundland & Labrador": 3,
+            "Placentia": 1,
+            "St. John's": 4
+          }
+        },
+        "NS": {
+          "total_towers": 18,
+          "by_region": {
+            "Antigonish/New Glasgow": 2,
+            "Mainland Nova Scotia": 7,
+            "Nova Scotia & Prince Edward Island": 6,
+            "Sydney": 2,
+            "Truro": 1
+          }
+        },
+        "ON": {
+          "total_towers": 715,
+          "by_region": {
+            "Alliston": 2,
+            "Barrie": 14,
+            "Belleville": 2,
+            "Chatham": 8,
+            "Cornwall": 2,
+            "Cottam": 2,
+            "Eastern Ontario & Outaouais": 227,
+            "Guelph/Kitchener": 13,
+            "Hawkesbury": 2,
+            "Huntsville": 2,
+            "Kingston": 1,
+            "Kirkland Lake": 1,
+            "Listowel/Goderich/Stratford": 3,
+            "London/Woodstock/St. Thomas": 16,
+            "Niagara-St. Catharines": 13,
+            "Northern Ontario": 16,
+            "Ottawa": 14,
+            "Sault Ste. Marie": 2,
+            "South, North, East Ontario": 119,
+            "Southern Ontario": 182,
+            "Strathroy": 4,
+            "Sudbury": 5,
+            "Toronto": 28,
+            "Windsor/Leamington": 37
+          }
+        },
+        "PE": {
+          "total_towers": 7,
+          "by_region": {
+            "Charlottetown": 1,
+            "Nova Scotia & Prince Edward Island": 4,
+            "Prince Edward Island": 1,
+            "Summerside": 1
+          }
+        },
+        "QC": {
+          "total_towers": 3849,
+          "by_region": {
+            "Abitibi": 1,
+            "Baie-Comeau": 1,
+            "Bas du fleuve/Gaspesie": 251,
+            "Chicoutimi-Jonquiere": 148,
+            "Eastern Ontario & Outaouais": 56,
+            "Eastern Quebec": 889,
+            "Eastern Townships": 180,
+            "Joliette": 8,
+            "La Tuque": 1,
+            "Montreal": 2025,
+            "Northern Quebec": 1,
+            "Ottawa": 5,
+            "Quebec": 61,
+            "Saint-Éphrem": 1,
+            "Sainte-Agathe-des-Monts": 1,
+            "Sept-Îles et Gaspésie, Beauce, Saint-Georges-Est,": 63,
+            "Sherbrooke": 1,
+            "Southern Quebec": 144,
+            "Trois-Rivieres": 9,
+            "Various communities in Northern Quebec": 3
+          }
+        },
+        "SK": {
+          "total_towers": 1,
+          "by_region": {
+            "Province of Saskatchewan": 1
+          }
+        }
+      }
+    },
+    "THE RAILWAY ASSOCIATION OF CANADA": {
+      "carrier_code": 0,
+      "total_towers": 5637,
+      "by_province": {
+        "AB": {
+          "total_towers": 722,
+          "by_region": {
+            "Canada": 722
+          }
+        },
+        "BC": {
+          "total_towers": 954,
+          "by_region": {
+            "Canada": 954
+          }
+        },
+        "MB": {
+          "total_towers": 472,
+          "by_region": {
+            "Canada": 472
+          }
+        },
+        "NB": {
+          "total_towers": 156,
+          "by_region": {
+            "Canada": 156
+          }
+        },
+        "NL": {
+          "total_towers": 19,
+          "by_region": {
+            "Canada": 19
+          }
+        },
+        "NS": {
+          "total_towers": 61,
+          "by_region": {
+            "Canada": 61
+          }
+        },
+        "NT": {
+          "total_towers": 1,
+          "by_region": {
+            "Canada": 1
+          }
+        },
+        "ON": {
+          "total_towers": 1713,
+          "by_region": {
+            "Canada": 1713
+          }
+        },
+        "PE": {
+          "total_towers": 1,
+          "by_region": {
+            "Canada": 1
+          }
+        },
+        "QC": {
+          "total_towers": 907,
+          "by_region": {
+            "Canada": 907
+          }
+        },
+        "SK": {
+          "total_towers": 631,
+          "by_region": {
+            "Canada": 631
+          }
+        }
+      }
+    },
+    "VIDEOTRON": {
+      "carrier_code": 5,
+      "total_towers": 1557,
+      "by_province": {
+        "ON": {
+          "total_towers": 98,
+          "by_region": {
+            "Eastern Ontario & Outaouais": 98
+          }
+        },
+        "QC": {
+          "total_towers": 1459,
+          "by_region": {
+            "Abitibi": 4,
+            "Bas du fleuve/Gaspesie": 6,
+            "Chicoutimi-Jonquiere": 54,
+            "Eastern Ontario & Outaouais": 65,
+            "Eastern Quebec": 211,
+            "Eastern Townships": 96,
+            "Montreal": 813,
+            "Northern Quebec": 2,
+            "Quebec": 19,
+            "Southern Quebec": 166,
+            "Trois-Rivieres": 11,
+            "Upper Outaouais": 12
+          }
+        }
+      }
+    },
+    "X-SPECTRUM 1 INC.": {
+      "carrier_code": 0,
+      "total_towers": 5,
+      "by_province": {
+        "MB": {
+          "total_towers": 1,
+          "by_region": {
+            "Manitoba": 1
+          }
+        },
+        "NB": {
+          "total_towers": 2,
+          "by_region": {
+            "New Brunswick": 2
+          }
+        },
+        "NL": {
+          "total_towers": 1,
+          "by_region": {
+            "Newfoundland & Labrador": 1
+          }
+        },
+        "NS": {
+          "total_towers": 1,
+          "by_region": {
+            "Nova Scotia & Prince Edward Island": 1
+          }
+        }
+      }
+    },
+    "X-SPECTRUM 2 INC.": {
+      "carrier_code": 0,
+      "total_towers": 1,
+      "by_province": {
+        "MB": {
+          "total_towers": 1,
+          "by_region": {
+            "Manitoba": 1
+          }
+        }
+      }
+    },
+    "XPLORE": {
+      "carrier_code": 9,
+      "total_towers": 1758,
+      "by_province": {
+        "AB": {
+          "total_towers": 372,
+          "by_region": {
+            "Barrhead": 7,
+            "Bonnyville": 16,
+            "Calgary": 58,
+            "Camrose": 13,
+            "Edmonton": 52,
+            "Edmonton-Makaoo": 15,
+            "Edson/Hinton": 11,
+            "Grande Prairie": 19,
+            "High River": 8,
+            "Lethbridge": 34,
+            "Lloydminster": 3,
+            "Medicine Hat/Brooks": 29,
+            "Outside Calgary Urban Core": 1,
+            "Peace River": 3,
+            "Red Deer": 49,
+            "Stettler/Oyen/Wainwright": 11,
+            "Strathmore": 11,
+            "Subtract  Urban core of 4-141 Edmonton": 5,
+            "Vegreville": 3,
+            "Wetaskiwin/Ponoka": 13,
+            "Whitecourt": 11
+          }
+        },
+        "BC": {
+          "total_towers": 2,
+          "by_region": {
+            "Golden": 2
+          }
+        },
+        "MB": {
+          "total_towers": 190,
+          "by_region": {
+            "Brandon": 82,
+            "Creighton/Flin Flon": 5,
+            "Dauphin": 18,
+            "Lac du Bonnet": 33,
+            "Morden/Winkler": 11,
+            "Outside of Winnipeg area": 14,
+            "Outside of Winnipeg portion covered by the Tier area 5-400": 19,
+            "Portage la Prairie": 1,
+            "Regina": 1,
+            "Steinbach": 2,
+            "Subtract Urban core of 4-111 Winnipeg": 2,
+            "Winnipeg": 2
+          }
+        },
+        "NB": {
+          "total_towers": 130,
+          "by_region": {
+            "Campbellton": 2,
+            "Eastern New Brunswick": 30,
+            "Edmundston": 1,
+            "Fredericton": 50,
+            "Grand Falls": 9,
+            "Miramichi/Bathurst": 9,
+            "Moncton": 1,
+            "Saint John": 18,
+            "Southern New Brunswick": 8,
+            "Western New Brunswick": 2
+          }
+        },
+        "NL": {
+          "total_towers": 54,
+          "by_region": {
+            "Corner Brook/Stephenville": 12,
+            "Gander/Grand Falls/Windsor": 20,
+            "Labrador": 1,
+            "Newfoundland & Labrador": 5,
+            "Placentia": 10,
+            "St. John's": 6
+          }
+        },
+        "NS": {
+          "total_towers": 41,
+          "by_region": {
+            "Amherst": 12,
+            "Antigonish/New Glasgow": 1,
+            "Bridgewater/Kentville": 2,
+            "Cape Breton": 1,
+            "Mainland Nova Scotia": 19,
+            "Truro": 6
+          }
+        },
+        "NT": {
+          "total_towers": 1,
+          "by_region": {
+            "Northwest Territories": 1
+          }
+        },
+        "NU": {
+          "total_towers": 1,
+          "by_region": {
+            "Nunavut": 1
+          }
+        },
+        "ON": {
+          "total_towers": 682,
+          "by_region": {
+            "Alliston": 9,
+            "Arnprior/Renfrew": 1,
+            "Barrie": 31,
+            "Belleville": 71,
+            "Brantford": 20,
+            "Brockville": 24,
+            "Chatham": 23,
+            "Cobourg": 19,
+            "Cornwall": 9,
+            "Elliot Lake": 9,
+            "Fergus": 5,
+            "Fort Erie": 2,
+            "Fort Frances": 1,
+            "Gananoque": 4,
+            "Gravenhurst/Bracebridge": 11,
+            "Guelph/Kitchener": 27,
+            "Haldimand/Dunnville": 17,
+            "Hawkesbury": 31,
+            "Huntsville": 3,
+            "Iron Bridge": 7,
+            "Kapuskasing": 10,
+            "Kenora/Sioux Lookout": 1,
+            "Kincardine": 36,
+            "Kingston": 25,
+            "Kirkland Lake": 8,
+            "Lindsay": 14,
+            "Listowel/Goderich": 8,
+            "Listowel/Goderich/Stratford": 1,
+            "London/Woodstock/St. Thomas": 40,
+            "Marathon": 2,
+            "Midland": 7,
+            "Minden": 4,
+            "Napanee": 4,
+            "Niagara-St. Catharines": 13,
+            "North Bay": 11,
+            "Ottawa": 32,
+            "Outside of Belleville": 2,
+            "Outside of Cobourg": 1,
+            "Outside of Ottawa-Gatineau": 33,
+            "Outside of Peterborough area": 3,
+            "Outside of Stratford area": 1,
+            "Pembroke": 2,
+            "Peterborough": 22,
+            "Sarnia": 7,
+            "Sault Ste. Marie": 3,
+            "Stratford": 1,
+            "Strathroy": 10,
+            "Subtract London/Woodstock/St. Thomas Urban core": 1,
+            "Subtract Urban core of 4-055 Ottawa": 15,
+            "Sudbury": 4,
+            "Thunder Bay": 1,
+            "Wallaceburg": 7,
+            "Windsor/Leamington": 29
+          }
+        },
+        "PE": {
+          "total_towers": 29,
+          "by_region": {
+            "Charlottetown": 17,
+            "Prince Edward Island": 9,
+            "Summerside": 3
+          }
+        },
+        "QC": {
+          "total_towers": 77,
+          "by_region": {
+            "Abitibi": 12,
+            "Arnprior/Renfrew": 1,
+            "Asbestos": 1,
+            "Baie-Comeau": 1,
+            "Chibougamau": 1,
+            "Chicoutimi-Jonquiere": 2,
+            "Coaticook": 1,
+            "Drummondville": 1,
+            "Eastern Townships": 3,
+            "Granby": 3,
+            "Hawkesbury": 3,
+            "Joliette": 6,
+            "La Malbaie": 2,
+            "La Tuque": 1,
+            "Matane": 2,
+            "Mont-Laurier/Maniwaki": 4,
+            "Montmagny": 3,
+            "Notre-Dame-du-Nord": 1,
+            "Ottawa": 4,
+            "Outside of Quebec area": 3,
+            "Rimouski": 1,
+            "Riviere-du-Loup": 8,
+            "Rouyn-Noranda": 1,
+            "Saint-Georges": 1,
+            "Sainte-Agathe-des-Monts": 1,
+            "Sainte-Marie": 2,
+            "Sherbrooke": 3,
+            "St-Hyacinthe": 2,
+            "Thetford Mines": 1,
+            "Val D'Or": 1,
+            "Windsor": 1
+          }
+        },
+        "SK": {
+          "total_towers": 178,
+          "by_region": {
+            "Battleford": 24,
+            "Estevan": 12,
+            "Moose Jaw": 13,
+            "Northern Saskatchewan": 1,
+            "Prince Albert": 40,
+            "Regina": 23,
+            "Saskatoon": 17,
+            "Subtract Swift Current Swift Current and surrounding area": 2,
+            "Swift Current": 16,
+            "Watrous": 12,
+            "Weyburn": 8,
+            "Yorkton": 10
+          }
+        },
+        "YT": {
+          "total_towers": 1,
+          "by_region": {
+            "Yukon": 1
+          }
+        }
+      }
+    }
+  }
+}
