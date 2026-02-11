@@ -1,0 +1,88 @@
+name: send-db-update-push
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g., 2026.02.03)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: send-db-update-push
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read and validate manifest version
+        id: manifest
+        run: |
+          set -euo pipefail
+          version_from_manifest="$(jq -r '.version' updates/manifest.json)"
+          echo "manifest_version=$version_from_manifest" >> "$GITHUB_OUTPUT"
+          if [[ "$version_from_manifest" != "${{ inputs.version }}" ]]; then
+            echo "Manifest version mismatch."
+            echo "  manifest: $version_from_manifest"
+            echo "  input:    ${{ inputs.version }}"
+            exit 1
+          fi
+
+      - name: Wait for GitHub Pages to serve the new manifest
+        env:
+          EXPECTED_VERSION: ${{ steps.manifest.outputs.manifest_version }}
+        run: |
+          set -euo pipefail
+          url="https://goldstandardsolutions.github.io/updates/manifest.json"
+          for i in {1..24}; do
+            served="$(curl -fsSL -H 'Cache-Control: no-cache' "$url" | jq -r '.version // empty' || true)"
+            if [[ "$served" == "$EXPECTED_VERSION" ]]; then
+              echo "Pages manifest is live: $served"
+              exit 0
+            fi
+            echo "Waiting for Pages manifest… (served=${served:-<empty>}, expected=$EXPECTED_VERSION)"
+            sleep 5
+          done
+          echo "Timed out waiting for Pages manifest to update."
+          exit 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps (runtime only)
+        run: npm install firebase-admin@^12
+
+      - name: Decode Firebase Admin service account key
+        env:
+          FIREBASE_ADMIN_SA_JSON_B64: ${{ secrets.FIREBASE_ADMIN_SA_JSON_B64 }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${FIREBASE_ADMIN_SA_JSON_B64:-}" ]]; then
+            echo "Missing secret FIREBASE_ADMIN_SA_JSON_B64"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import base64, os, sys
+          b64=os.environ["FIREBASE_ADMIN_SA_JSON_B64"].strip()
+          try:
+            data=base64.b64decode(b64, validate=True)
+          except Exception as e:
+            print(f"Failed to base64-decode FIREBASE_ADMIN_SA_JSON_B64: {e}", file=sys.stderr)
+            sys.exit(1)
+          open("firebase_sa.json","wb").write(data)
+          PY
+
+      - name: Send push (FCM topic)
+        env:
+          FIREBASE_ADMIN_SA_JSON: firebase_sa.json
+          TOPIC: cellmaster-db-updates
+          MANIFEST_PATH: updates/manifest.json
+        run: node scripts/send_fcm_topic.mjs
+
