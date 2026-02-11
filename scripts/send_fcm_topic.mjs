@@ -38,8 +38,8 @@ async function main() {
   const message = {
     topic,
     notification: {
-      title: "CellMaster update",
-      body: `New tower database available: ${version}. Tap to update.`,
+      title: "New Database Update",
+      body: `Database ${version} is now available.`,
     },
     data: {
       event: "db_update",
@@ -71,4 +71,3 @@ main().catch((err) => {
   console.error(err?.stack || String(err));
   process.exit(1);
 });
-
