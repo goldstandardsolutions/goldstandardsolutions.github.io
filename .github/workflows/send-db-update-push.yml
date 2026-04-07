@@ -7,6 +7,24 @@ on:
         description: "Version tag (e.g., 2026.02.03)"
         required: true
         type: string
+      title:
+        description: "Optional push title override"
+        required: false
+        type: string
+      body:
+        description: "Optional push body override"
+        required: false
+        type: string
+      event:
+        description: "Optional data.event override"
+        required: false
+        default: "db_update"
+        type: string
+      topic:
+        description: "Optional FCM topic override"
+        required: false
+        default: "cellmaster-db-updates"
+        type: string
 
 permissions:
   contents: read
@@ -82,7 +100,9 @@ jobs:
       - name: Send push (FCM topic)
         env:
           FIREBASE_ADMIN_SA_JSON: firebase_sa.json
-          TOPIC: cellmaster-db-updates
+          TOPIC: ${{ inputs.topic }}
           MANIFEST_PATH: updates/manifest.json
+          NOTIFICATION_TITLE: ${{ inputs.title }}
+          NOTIFICATION_BODY: ${{ inputs.body }}
+          EVENT_NAME: ${{ inputs.event }}
         run: node scripts/send_fcm_topic.mjs
-

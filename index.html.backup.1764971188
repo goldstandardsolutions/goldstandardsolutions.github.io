@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>CellMaster — Gold Standard Solutions</title>
+<link rel="icon" href="cellmaster-icon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="CellMaster support and policies">
+<style>
+  :root { --bg:#0b1320; --card:#0f172a; --text:#e5e7eb; --muted:#9ca3af; }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100dvh; display:grid; place-items:center;
+    background:radial-gradient(80vmax 80vmax at 10% 0%, #1f2937 0, #0b1320 50%, #05080f 100%);
+    color:var(--text); font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .wrap{width:min(880px, 92%); padding:28px}
+  .card{
+    background:var(--card); border:1px solid #1f2a44; border-radius:18px;
+    padding:28px; box-shadow:0 10px 30px rgba(0,0,0,.35)
+  }
+  .header{display:flex; align-items:center; gap:14px; margin:0 0 18px}
+  .logo{
+    width:76px; height:76px; border-radius:18px; border:1px solid #1f2a44;
+    background:#0b1320; box-shadow:0 6px 16px rgba(0,0,0,.35);
+    display:block; object-fit:contain;
+    flex-shrink:0;
+  }
+  h1{margin:0; font-size:1.9rem}
+  p.sub{margin:6px 0 0; color:var(--muted)}
+  .links{display:grid; gap:12px; margin-top:10px}
+  a.btn{
+    display:block; text-decoration:none; text-align:center; padding:14px 16px; border-radius:12px;
+    border:1px solid #26324f; background:#111a31; color:var(--text); transition:.15s transform ease;
+  }
+  a.btn:hover{transform:translateY(-2px)}
+  footer{margin-top:16px; color:var(--muted); font-size:.9rem; text-align:center}
+</style>
+
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <img class="logo" src="cellmaster-icon.svg" alt="CellMaster iOS icon" width="76" height="76" loading="lazy">
+      <div>
+        <h1>CellMaster</h1>
+        <p class="sub">Gold Standard Solutions • iOS</p>
+      </div>
+    </div>
+
+    <div class="links">
+      <a class="btn" href="/support.html">Contact Support</a>
+      <a class="btn" href="/privacy-policy.html">Privacy Policy</a>
+    </div>
+
+    <footer>
+      © <span id="y"></span> Gold Standard Solutions •
+      <a href="mailto:goldstandardsoftware@gmail.com" style="color:inherit">goldstandardsoftware@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+<script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+</html>

@@ -19,6 +19,9 @@ async function main() {
   const manifestPath = process.env.MANIFEST_PATH ?? "updates/manifest.json";
   const topic = process.env.TOPIC ?? "cellmaster-db-updates";
   const saPath = requiredEnv("FIREBASE_ADMIN_SA_JSON");
+  const notificationTitle = process.env.NOTIFICATION_TITLE?.trim();
+  const notificationBody = process.env.NOTIFICATION_BODY?.trim();
+  const eventName = process.env.EVENT_NAME?.trim() || "db_update";
 
   const [manifestRaw, saRaw] = await Promise.all([
     fs.readFile(manifestPath, "utf8"),
@@ -38,11 +41,11 @@ async function main() {
   const message = {
     topic,
     notification: {
-      title: "New Database Update",
-      body: `Database ${version} is now available.`,
+      title: notificationTitle || "New Database Update",
+      body: notificationBody || `Database ${version} is now available.`,
     },
     data: {
-      event: "db_update",
+      event: eventName,
       version,
       manifestUrl: "https://goldstandardsolutions.github.io/updates/manifest.json",
       releaseUrl: toStringValue(manifest.url),
