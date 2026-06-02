@@ -1,10 +1,10 @@
 {
-  "version": "2026.05.06",
-  "releasedAt": "2026-05-06T00:00:00Z",
+  "version": "2026.06.02",
+  "releasedAt": "2026-06-02T00:00:00Z",
   "minAppVersion": "1.0.0",
-  "sizeBytes": 262209536,
-  "sha256": "42a56350fd7521c747d1e7162c21c31754f8b92a04afbbdb0e1f8e38818bb781",
-  "url": "https://github.com/goldstandardsolutions/goldstandardsolutions.github.io/releases/download/2026.05.06/towers-2026.05.06.db",
+  "sizeBytes": 263491584,
+  "sha256": "00db0843c1b0e8035fb42c68dc448acf310c21c57959bdf73a83c38df9d342b6",
+  "url": "https://github.com/goldstandardsolutions/goldstandardsolutions.github.io/releases/download/2026.06.02/towers-2026.06.02.db",
   "notes": "",
   "signature": ""
 }
