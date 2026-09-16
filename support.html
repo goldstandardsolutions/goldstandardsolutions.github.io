@@ -4,9 +4,16 @@
 <title>Support — CellMaster</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
+  :root{color-scheme:light dark;--bg:#fff;--text:#172033;--border:#d8e0ec;--button:#f4f7fb}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0b1320;--text:#e5e7eb;--border:#26324f;--button:#111a31}
+  }
   body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-       max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;text-align:center}
-  a.btn{display:inline-block;padding:12px 18px;border-radius:10px;border:1px solid #ddd;text-decoration:none}
+       max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;text-align:center;
+       background:var(--bg);color:var(--text)}
+  a{color:inherit}
+  a.btn{display:inline-block;padding:12px 18px;border-radius:10px;border:1px solid var(--border);
+        background:var(--button);color:var(--text);text-decoration:none}
 </style>
 <h1>CellMaster Support</h1>
 <p>Need help? Tap below to email us.</p>
