@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101a31">
+  <meta name="description" content="Open a shared CellMaster tower in the iOS or Android app.">
+  <title>Open a tower in CellMaster</title>
+  <link rel="icon" href="/cellmaster-icon.svg" type="image/svg+xml">
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #edf2fa; color: #172033; }
+    main { width: min(100%, 460px); padding: 30px; border-radius: 20px; background: #fff; box-shadow: 0 16px 48px #17203322; }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-weight: 700; }
+    .brand img { width: 48px; height: 48px; }
+    h1 { font-size: 1.5rem; line-height: 1.2; margin: 0 0 8px; }
+    p { margin: 0 0 18px; }
+    .muted { color: #56657c; }
+    .choices { display: grid; gap: 12px; }
+    .button { display: block; padding: 14px 16px; border-radius: 12px; background: #1b4ec4; color: #fff; font-weight: 650; text-align: center; text-decoration: none; }
+    .button:hover, .button:focus-visible { background: #123eaa; }
+    .downloads { margin: 20px 0 0; font-size: .9rem; }
+    .downloads a { color: #1648b4; }
+    .error { color: #9a2525; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0b1320; color: #e5e7eb; }
+      main { background: #172236; box-shadow: 0 16px 48px #0006; }
+      .muted { color: #b2bed0; }
+      .downloads a { color: #9abaff; }
+      .error { color: #ffb4b4; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><img src="/cellmaster-icon.svg" alt="" width="48" height="48"> CellMaster</div>
+    <h1>Open this tower</h1>
+    <p id="tower" class="muted">Checking the shared tower link…</p>
+    <div id="choices" class="choices" hidden>
+      <a id="ios" class="button" href="#">Open in the iOS app</a>
+      <a id="android" class="button" href="#">Open in the Android app</a>
+    </div>
+    <p class="downloads muted">Need CellMaster? <a href="https://apps.apple.com/ca/app/cellmaster/id6749219558">Get the iOS app</a> or <a href="https://play.google.com/store/apps/details?id=com.goldstandardsolutions.cellmaster">get the Android app</a>.</p>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const lat = Number(params.get('lat'));
+    const lon = Number(params.get('lon'));
+    const valid = params.has('lat') && params.has('lon') && Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180;
+    const title = document.getElementById('tower');
+    if (!valid) {
+      title.textContent = 'This tower link is missing valid coordinates.';
+      title.classList.add('error');
+    } else {
+      const name = (params.get('name') || '').trim().slice(0, 120);
+      title.textContent = name ? `${name} · ${lat.toFixed(6)}, ${lon.toFixed(6)}` : `Tower at ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+      const query = new URLSearchParams({lat: lat.toFixed(6), lon: lon.toFixed(6)});
+      if (name) query.set('name', name);
+      const towerPath = `tower?${query}`;
+      document.getElementById('ios').href = `cellmaster://${towerPath}`;
+      const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=com.goldstandardsolutions.cellmaster');
+      document.getElementById('android').href = `intent://${towerPath}#Intent;scheme=cellmaster;package=com.goldstandardsolutions.cellmaster;S.browser_fallback_url=${fallback};end`;
+      document.getElementById('choices').hidden = false;
+    }
+  </script>
+</body>
+</html>
